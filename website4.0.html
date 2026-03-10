@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Pulse | Magical Burnout & Stress Monitoring</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --magic-primary: #1a0b2e;
+            --magic-secondary: #2d1b4e;
+            --magic-accent: #ffd700;
+            --magic-cyan: #00d4ff;
+            --magic-purple: #9d4edd;
+            --magic-rose: #ff006e;
+            --magic-emerald: #06ffa5;
+        }
+        
+        body {
+            font-family: 'Crimson Text', serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, .magic-font {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Magical Background Effects */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+            opacity: 0;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: var(--opacity); transform: scale(1); box-shadow: 0 0 10px var(--color); }
+        }
+        
+        .floating-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 0;
+            animation: float-orb 20s ease-in-out infinite;
+        }
+        
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #9d4edd 0%, transparent 70%);
+            top: -100px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+        
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, #00d4ff 0%, transparent 70%);
+            bottom: -50px;
+            left: -50px;
+            animation-delay: -5s;
+        }
+        
+        .orb-3 {
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, #ff006e 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            animation-delay: -10s;
+        }
+        
+        @keyframes float-orb {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+        
+        /* Magical Glass Panels */
+        .magic-panel {
+            background: rgba(26, 11, 46, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(157, 78, 221, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .magic-panel::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #9d4edd, #00d4ff, #ff006e, #9d4edd);
+            border-radius: inherit;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .magic-panel:hover::before {
+            opacity: 0.5;
+            animation: border-glow 3s linear infinite;
+        }
+        
+        @keyframes border-glow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+        
+        .magic-card {
+            background: rgba(45, 27, 78, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(157, 78, 221, 0.15);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .magic-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        .magic-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(157, 78, 221, 0.4);
+            box-shadow: 0 20px 60px rgba(157, 78, 221, 0.2),
+                        0 0 30px rgba(0, 212, 255, 0.1);
+        }
+        
+        .magic-card:hover::after {
+            opacity: 1;
+        }
+        
+        /* Magical Text Effects */
+        .magic-text {
+            background: linear-gradient(135deg, #ffd700 0%, #ff006e 50%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor;
+        }
+        
+        /* Magical Buttons */
+        .magic-btn {
+            background: linear-gradient(135deg, #9d4edd 0%, #00d4ff 100%);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .magic-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .magic-btn:hover::before {
+            left: 100%;
+        }
+        
+        .magic-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(157, 78, 221, 0.4);
+        }
+        
+        /* Magical Slider */
+        .magic-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #06ffa5, #ffd700, #ff006e);
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+        
+        .magic-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffd700 0%, #ff006e 100%);
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            border: 2px solid white;
+            transition: transform 0.2s;
+        }
+        
+        .magic-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.3);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 1);
+        }
+        
+        /* Rune Circle for Burnout Score */
+        .rune-circle {
+            position: relative;
+            filter: drop-shadow(0 0 20px rgba(157, 78, 221, 0.5));
+        }
+        
+        .rune-circle svg {
+            transform: rotate(-90deg);
+            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
+        }
+        
+        .rune-glow {
+            animation: rune-pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes rune-pulse {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(157, 78, 221, 0.5)); }
+            50% { filter: drop-shadow(0 0 40px rgba(0, 212, 255, 0.8)); }
+        }
+        
+        /* Magical Particles */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ffd700;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particle-float 3s ease-out forwards;
+        }
+        
+        @keyframes particle-float {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+        
+        /* Tab Magic */
+        .magic-tab {
+            position: relative;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .magic-tab.active {
+            background: linear-gradient(135deg, #9d4edd 0%, #00d4ff 100%);
+            box-shadow: 0 0 20px rgba(157, 78, 221, 0.5);
+            color: white;
+        }
+        
+        .magic-tab::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ffd700, #ff006e);
+            transition: width 0.3s;
+        }
+        
+        .magic-tab:hover::after {
+            width: 80%;
+        }
+        
+        /* Spell Card Effects */
+        .spell-card {
+            background: linear-gradient(135deg, rgba(157, 78, 221, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%);
+            border-left: 3px solid #ffd700;
+            position: relative;
+        }
+        
+        .spell-card::before {
+            content: '✦';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #ffd700;
+            opacity: 0.5;
+            font-size: 1.2rem;
+        }
+        
+        /* Breathing Magic Circle */
+        .magic-circle {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+        
+        .magic-circle-ring {
+            position: absolute;
+            inset: 0;
+            border: 2px solid transparent;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #9d4edd, #00d4ff, #ff006e) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: rotate-ring 10s linear infinite;
+        }
+        
+        @keyframes rotate-ring {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .breathing-active {
+            animation: magic-breathe 4s ease-in-out infinite;
+        }
+        
+        @keyframes magic-breathe {
+            0%, 100% { transform: scale(1); filter: hue-rotate(0deg); }
+            50% { transform: scale(1.15); filter: hue-rotate(30deg); }
+        }
+        
+        /* Constellation Lines */
+        .constellation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.1;
+        }
+        
+        /* Scrollbar Magic */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1a0b2e;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #9d4edd, #00d4ff);
+            border-radius: 5px;
+        }
+        
+        /* Loading Spell */
+        .loading-rune {
+            animation: rune-spin 2s linear infinite;
+        }
+        
+        @keyframes rune-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Section visibility */
+        .section-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        .section-content.active {
+            display: block;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Magical Background -->
+    <div class="stars" id="stars-container"></div>
+    <div class="floating-orb orb-1"></div>
+    <div class="floating-orb orb-2"></div>
+    <div class="floating-orb orb-3"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 magic-panel border-b border-purple-500/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 via-cyan-400 to-rose-500 flex items-center justify-center rune-glow">
+                            <i class="fas fa-scroll text-white text-xl"></i>
+                        </div>
+                        <div class="absolute inset-0 rounded-full border-2 border-yellow-400/50 animate-ping"></div>
+                    </div>
+                    <span class="text-3xl font-bold magic-font tracking-wider">
+                        Study <span class="magic-text">Pulse</span>
+                    </span>
+                </div>
+                
+                <div class="hidden md:flex space-x-2">
+                    <button id="btn-dashboard" class="magic-tab active px-6 py-2 rounded-full text-sm font-medium transition-all text-white">
+                        <i class="fas fa-star mr-2"></i>Dashboard
+                    </button>
+                    <button id="btn-checkin" class="magic-tab px-6 py-2 rounded-full text-sm font-medium transition-all text-slate-300 hover:text-white">
+                        <i class="fas fa-magic mr-2"></i>Daily Rune
+                    </button>
+                    <button id="btn-tracker" class="magic-tab px-6 py-2 rounded-full text-sm font-medium transition-all text-slate-300 hover:text-white">
+                        <i class="fas fa-hourglass-half mr-2"></i>Chronicle
+                    </button>
+                    <button id="btn-wellness" class="magic-tab px-6 py-2 rounded-full text-sm font-medium transition-all text-slate-300 hover:text-white">
+                        <i class="fas fa-sparkles mr-2"></i>Sanctuary
+                    </button>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="hidden sm:flex items-center space-x-2 text-sm text-purple-300">
+                        <i class="fas fa-hat-wizard"></i>
+                        <span class="magic-font">Arcanist</span>
+                    </div>
+                    <button class="md:hidden text-slate-300 hover:text-white" id="mobile-menu-btn">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden magic-panel border-t border-purple-500/20">
+            <div class="px-4 pt-2 pb-4 space-y-1">
+                <button class="mobile-tab w-full text-left px-4 py-3 rounded-lg text-slate-300 hover:bg-purple-500/20" data-tab="dashboard">Dashboard</button>
+                <button class="mobile-tab w-full text-left px-4 py-3 rounded-lg text-slate-300 hover:bg-purple-500/20" data-tab="checkin">Daily Rune</button>
+                <button class="mobile-tab w-full text-left px-4 py-3 rounded-lg text-slate-300 hover:bg-purple-500/20" data-tab="tracker">Chronicle</button>
+                <button class="mobile-tab w-full text-left px-4 py-3 rounded-lg text-slate-300 hover:bg-purple-500/20" data-tab="wellness">Sanctuary</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative z-10">
+        
+        <!-- Dashboard Section -->
+        <div id="section-dashboard" class="section-content active space-y-6">
+            <div class="text-center mb-8 floating">
+                <h2 class="text-4xl font-bold magic-font mb-2 glow-text text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-rose-400 to-cyan-400">
+                    Arcane Dashboard
+                </h2>
+                <p class="text-purple-300 italic">"In the realm of knowledge, balance is the truest magic"</p>
+            </div>
+
+            <!-- Hero Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Burnout Risk Score - Magical Orb -->
+                <div class="magic-card rounded-2xl p-8 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-40 h-40 bg-rose-500/20 rounded-full blur-3xl -mr-20 -mt-20"></div>
+                    <div class="relative z-10 text-center">
+                        <h3 class="text-purple-300 text-sm font-bold uppercase tracking-widest mb-6 magic-font">Essence Balance</h3>
+                        <div class="flex items-center justify-center mb-6">
+                            <div class="rune-circle w-40 h-40">
+                                <svg class="w-full h-full" viewBox="0 0 100 100">
+                                    <defs>
+                                        <linearGradient id="magicGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#06ffa5" />
+                                            <stop offset="50%" stop-color="#ffd700" />
+                                            <stop offset="100%" stop-color="#ff006e" />
+                                        </linearGradient>
+                                    </defs>
+                                    <circle cx="50" cy="50" r="45" fill="none" stroke="#2d1b4e" stroke-width="6"/>
+                                    <circle id="burnout-circle" cx="50" cy="50" r="45" fill="none" stroke="url(#magicGradient)" stroke-width="6" 
+                                            stroke-dasharray="283" stroke-dashoffset="283" stroke-linecap="round" class="metric-circle"/>
+                                    <text x="50" y="15" text-anchor="middle" fill="#ffd700" font-size="8" class="magic-font">✦</text>
+                                    <text x="85" y="50" text-anchor="middle" fill="#ffd700" font-size="8" class="magic-font">✦</text>
+                                    <text x="50" y="85" text-anchor="middle" fill="#ffd700" font-size="8" class="magic-font">✦</text>
+                                    <text x="15" y="50" text-anchor="middle" fill="#ffd700" font-size="8" class="magic-font">✦</text>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center flex-col">
+                                    <span id="burnout-score" class="text-4xl font-bold magic-font text-white glow-text">--</span>
+                                    <span class="text-xs text-purple-300 mt-1">/100</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p id="burnout-status" class="text-center text-sm font-medium text-cyan-300 magic-font tracking-wide">Cast your daily rune to reveal</p>
+                    </div>
+                </div>
+
+                <!-- Weekly Average - Crystal Ball -->
+                <div class="magic-card rounded-2xl p-6">
+                    <h3 class="text-purple-300 text-sm font-bold uppercase tracking-widest mb-4 magic-font">
+                        <i class="fas fa-crystal-ball mr-2"></i>Stress Prophecy
+                    </h3>
+                    <div class="h-40 relative">
+                        <canvas id="weeklyChart"></canvas>
+                    </div>
+                    <div class="mt-4 flex justify-between items-center">
+                        <span class="text-3xl font-bold magic-font text-yellow-400 glow-text" id="weekly-avg">--</span>
+                        <span class="text-xs px-3 py-1 rounded-full bg-purple-500/20 border border-purple-500/50 text-purple-300">7 Moons</span>
+                    </div>
+                </div>
+
+                <!-- Sleep Quality - Dream Catcher -->
+                <div class="magic-card rounded-2xl p-6">
+                    <h3 class="text-purple-300 text-sm font-bold uppercase tracking-widest mb-4 magic-font">
+                        <i class="fas fa-moon mr-2"></i>Dream Weaving
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <span class="text-3xl font-bold magic-font text-indigo-400 glow-text" id="avg-sleep">--</span>
+                                <span class="text-sm text-purple-300">hrs/night</span>
+                            </div>
+                            <div id="sleep-trend" class="text-sm">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <span class="text-emerald-400 magic-font">Harmonious</span>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs text-purple-400 magic-font">
+                                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                            </div>
+                            <div class="flex justify-between h-16 items-end space-x-1" id="sleep-bars">
+                                <!-- Bars generated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions & Recent Activity -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 magic-card rounded-2xl p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-bold magic-font text-yellow-400">
+                            <i class="fas fa-scroll mr-2"></i>Knowledge Rituals
+                        </h3>
+                        <button id="goto-tracker" class="text-cyan-400 text-sm hover:text-cyan-300 transition magic-font">View Grimoire →</button>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="studyChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="magic-card rounded-2xl p-6">
+                    <h3 class="text-lg font-bold magic-font text-yellow-400 mb-6">
+                        <i class="fas fa-wand-sparkles mr-2"></i>Quick Spells
+                    </h3>
+                    <div class="space-y-4">
+                        <button id="goto-checkin" class="w-full p-4 rounded-xl bg-gradient-to-r from-purple-500/20 to-cyan-500/20 border border-purple-500/30 hover:border-yellow-400 transition group relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                            <div class="flex items-center space-x-3 relative z-10">
+                                <div class="w-12 h-12 rounded-full bg-purple-500/30 flex items-center justify-center group-hover:scale-110 transition rune-glow">
+                                    <i class="fas fa-plus text-yellow-400"></i>
+                                </div>
+                                <div class="text-left">
+                                    <div class="font-bold text-slate-200 magic-font">Daily Rune</div>
+                                    <div class="text-xs text-purple-300">Cast your essence</div>
+                                </div>
+                            </div>
+                        </button>
+                        
+                        <button id="goto-breathing" class="w-full p-4 rounded-xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 hover:border-emerald-400 transition group relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                            <div class="flex items-center space-x-3 relative z-10">
+                                <div class="w-12 h-12 rounded-full bg-emerald-500/30 flex items-center justify-center group-hover:scale-110 transition rune-glow">
+                                    <i class="fas fa-wind text-emerald-400"></i>
+                                </div>
+                                <div class="text-left">
+                                    <div class="font-bold text-slate-200 magic-font">Mana Breathing</div>
+                                    <div class="text-xs text-purple-300">Restore your power</div>
+                                </div>
+                            </div>
+                        </button>
+                        
+                        <button id="goto-wellness" class="w-full p-4 rounded-xl bg-gradient-to-r from-rose-500/20 to-pink-500/20 border border-rose-500/30 hover:border-rose-400 transition group relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                            <div class="flex items-center space-x-3 relative z-10">
+                                <div class="w-12 h-12 rounded-full bg-rose-500/30 flex items-center justify-center group-hover:scale-110 transition rune-glow">
+                                    <i class="fas fa-heart text-rose-400"></i>
+                                </div>
+                                <div class="text-left">
+                                    <div class="font-bold text-slate-200 magic-font">Healing Ward</div>
+                                    <div class="text-xs text-purple-300">Ancient wisdom</div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Check-in Section -->
+        <div id="section-checkin" class="section-content space-y-6 max-w-3xl mx-auto">
+            <div class="text-center mb-8 floating">
+                <h2 class="text-4xl font-bold magic-font mb-2 glow-text text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-rose-400 to-cyan-400">
+                    Daily Rune Casting
+                </h2>
+                <p class="text-purple-300 italic">"Reveal thy inner truth to the arcane crystals"</p>
+            </div>
+
+            <div class="magic-card rounded-2xl p-8 space-y-8 relative">
+                <div class="absolute top-4 right-4 text-yellow-400/30 text-4xl">✦</div>
+                <div class="absolute bottom-4 left-4 text-cyan-400/30 text-4xl">✦</div>
+                
+                <!-- Stress Level -->
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <label class="text-lg font-bold text-slate-200 magic-font">
+                            <i class="fas fa-brain mr-2 text-purple-400"></i>Current Mana Strain
+                        </label>
+                        <span id="stress-value" class="text-3xl font-bold magic-font text-yellow-400 glow-text">5</span>
+                    </div>
+                    <div class="relative">
+                        <input type="range" min="1" max="10" value="5" class="magic-slider" id="stress-slider">
+                        <div class="flex justify-between text-xs text-purple-400 mt-2 magic-font">
+                            <span>Serene</span>
+                            <span>Balanced</span>
+                            <span>Chaos</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sleep Hours -->
+                <div class="space-y-4">
+                    <label class="text-lg font-bold text-slate-200 block magic-font">
+                        <i class="fas fa-moon mr-2 text-indigo-400"></i>Dream Realm Visitation
+                    </label>
+                    <div class="grid grid-cols-4 gap-3">
+                        <button class="sleep-btn p-3 rounded-lg border border-purple-500/30 hover:border-yellow-400 hover:bg-purple-500/10 transition text-center group" data-value="4">
+                            <div class="text-2xl mb-1 group-hover:scale-110 transition">🌑</div>
+                            <div class="text-sm text-purple-300 magic-font">&lt; 5 hrs</div>
+                            <div class="text-xs text-rose-400">Drained</div>
+                        </button>
+                        <button class="sleep-btn p-3 rounded-lg border border-purple-500/30 hover:border-yellow-400 hover:bg-purple-500/10 transition text-center group" data-value="6">
+                            <div class="text-2xl mb-1 group-hover:scale-110 transition">🌒</div>
+                            <div class="text-sm text-purple-300 magic-font">5-6 hrs</div>
+                            <div class="text-xs text-amber-400">Weary</div>
+                        </button>
+                        <button class="sleep-btn p-3 rounded-lg border border-yellow-400 bg-purple-500/20 transition text-center ring-2 ring-yellow-400/50 group" data-value="7.5">
+                            <div class="text-2xl mb-1 group-hover:scale-110 transition">🌕</div>
+                            <div class="text-sm text-purple-300 magic-font">7-8 hrs</div>
+                            <div class="text-xs text-emerald-400">Restored</div>
+                        </button>
+                        <button class="sleep-btn p-3 rounded-lg border border-purple-500/30 hover:border-yellow-400 hover:bg-purple-500/10 transition text-center group" data-value="9">
+                            <div class="text-2xl mb-1 group-hover:scale-110 transition">✨</div>
+                            <div class="text-sm text-purple-300 magic-font">8+ hrs</div>
+                            <div class="text-xs text-cyan-400">Enchanted</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Study Hours -->
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <label class="text-lg font-bold text-slate-200 magic-font">
+                            <i class="fas fa-book mr-2 text-amber-400"></i>Knowledge Seeking
+                        </label>
+                        <span id="study-display" class="text-lg font-bold text-amber-400 magic-font glow-text">7.5 hrs</span>
+                    </div>
+                    <input type="range" min="0" max="16" step="0.5" value="7.5" class="w-full h-2 bg-purple-900/50 rounded-lg appearance-none cursor-pointer accent-amber-400" id="study-slider">
+                    <div class="flex justify-between text-xs text-purple-400 magic-font">
+                        <span>0h</span>
+                        <span>4h</span>
+                        <span>8h</span>
+                        <span>12h</span>
+                        <span>16h</span>
+                    </div>
+                </div>
+
+                <!-- Mood Check -->
+                <div class="space-y-4">
+                    <label class="text-lg font-bold text-slate-200 block magic-font">
+                        <i class="fas fa-heart mr-2 text-rose-400"></i>Emotional Essence
+                    </label>
+                    <div class="flex justify-between gap-2">
+                        <button class="mood-btn flex-1 p-4 rounded-xl border border-purple-500/30 hover:border-rose-400 hover:bg-rose-500/10 transition text-3xl grayscale hover:grayscale-0 group" data-mood="1">
+                            <div class="transform group-hover:scale-110 transition">💀</div>
+                            <div class="text-xs mt-1 text-purple-400 magic-font">Doom</div>
+                        </button>
+                        <button class="mood-btn flex-1 p-4 rounded-xl border border-purple-500/30 hover:border-orange-400 hover:bg-orange-500/10 transition text-3xl grayscale hover:grayscale-0 group" data-mood="2">
+                            <div class="transform group-hover:scale-110 transition">🌧️</div>
+                            <div class="text-xs mt-1 text-purple-400 magic-font">Gloom</div>
+                        </button>
+                        <button class="mood-btn flex-1 p-4 rounded-xl border border-purple-500/30 hover:border-yellow-400 hover:bg-yellow-500/10 transition text-3xl grayscale hover:grayscale-0 group" data-mood="3">
+                            <div class="transform group-hover:scale-110 transition">🌫️</div>
+                            <div class="text-xs mt-1 text-purple-400 magic-font">Mist</div>
+                        </button>
+                        <button class="mood-btn flex-1 p-4 rounded-xl border border-yellow-400 bg-yellow-500/10 transition text-3xl ring-2 ring-yellow-400/50 group" data-mood="4">
+                            <div class="transform group-hover:scale-110 transition">🌤️</div>
+                            <div class="text-xs mt-1 text-purple-400 magic-font">Glow</div>
+                        </button>
+                        <button class="mood-btn flex-1 p-4 rounded-xl border border-purple-500/30 hover:border-emerald-400 hover:bg-emerald-500/10 transition text-3xl grayscale hover:grayscale-0 group" data-mood="5">
+                            <div class="transform group-hover:scale-110 transition">🔥</div>
+                            <div class="text-xs mt-1 text-purple-400 magic-font">Blaze</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Physical Symptoms -->
+                <div class="space-y-3">
+                    <label class="text-lg font-bold text-slate-200 block magic-font">
+                        <i class="fas fa-skull mr-2 text-rose-400"></i>Physical Afflictions
+                    </label>
+                    <div class="flex flex-wrap gap-2" id="symptoms-container">
+                        <button class="symptom-tag px-4 py-2 rounded-full border border-purple-500/30 text-sm hover:border-rose-400 hover:text-rose-400 transition magic-font" data-symptom="headache">Mind Splitting</button>
+                        <button class="symptom-tag px-4 py-2 rounded-full border border-purple-500/30 text-sm hover:border-rose-400 hover:text-rose-400 transition magic-font" data-symptom="fatigue">Soul Drained</button>
+                        <button class="symptom-tag px-4 py-2 rounded-full border border-purple-500/30 text-sm hover:border-rose-400 hover:text-rose-400 transition magic-font" data-symptom="insomnia">Dreamless</button>
+                        <button class="symptom-tag px-4 py-2 rounded-full border border-purple-500/30 text-sm hover:border-rose-400 hover:text-rose-400 transition magic-font" data-symptom="appetite">Hunger Faded</button>
+                        <button class="symptom-tag px-4 py-2 rounded-full border border-purple-500/30 text-sm hover:border-rose-400 hover:text-rose-400 transition magic-font" data-symptom="muscle">Body Chains</button>
+                        <button class="symptom-tag px-4 py-2 rounded-full border border-purple-500/30 text-sm hover:border-rose-400 hover:text-rose-400 transition magic-font" data-symptom="none">Unscathed</button>
+                    </div>
+                </div>
+
+                <button id="submit-checkin" class="w-full py-4 rounded-xl magic-btn text-white font-bold text-lg magic-font tracking-widest relative overflow-hidden group">
+                    <span class="relative z-10">Cast Rune & Reveal Destiny</span>
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tracker Section -->
+        <div id="section-tracker" class="section-content space-y-6">
+            <div class="text-center mb-8 floating">
+                <h2 class="text-4xl font-bold magic-font mb-2 glow-text text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-rose-400 to-cyan-400">
+                    Chronicle of Shadows
+                </h2>
+                <p class="text-purple-300 italic">"The grimoire remembers all that was and will be"</p>
+            </div>
+
+            <div class="flex justify-end mb-6">
+                <button id="add-study-session" class="px-6 py-3 rounded-full magic-btn text-white font-bold magic-font relative overflow-hidden group">
+                    <i class="fas fa-quill mr-2"></i>Inscribe Session
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Study Log -->
+                <div class="magic-card rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-4 flex items-center text-yellow-400 magic-font">
+                        <i class="fas fa-scroll mr-2"></i>Recent Rituals
+                    </h3>
+                    <div class="space-y-3 max-h-96 overflow-y-auto" id="study-log">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Sleep Log -->
+                <div class="magic-card rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-4 flex items-center text-indigo-400 magic-font">
+                        <i class="fas fa-moon mr-2"></i>Dream Chronicles
+                    </h3>
+                    <div class="space-y-3" id="sleep-log">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Analytics -->
+            <div class="magic-card rounded-2xl p-6">
+                <h3 class="text-lg font-bold mb-6 text-cyan-400 magic-font">
+                    <i class="fas fa-eye mr-2"></i>Arcane Correlations
+                </h3>
+                <div class="h-80">
+                    <canvas id="correlationChart"></canvas>
+                </div>
+                <div class="mt-4 p-4 rounded-lg bg-purple-900/30 border border-purple-500/30">
+                    <p class="text-sm text-purple-200 italic magic-font" id="correlation-insight">
+                        <i class="fas fa-star mr-2 text-yellow-400"></i>
+                        The crystals reveal that thy stress peaks when seeking knowledge beyond 10 hours with less than 6 hours in the dream realm.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wellness Section -->
+        <div id="section-wellness" class="section-content space-y-6">
+            <div class="text-center mb-8 floating">
+                <h2 class="text-4xl font-bold magic-font mb-2 glow-text text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-rose-400 to-cyan-400">
+                    Sanctuary of Light
+                </h2>
+                <p class="text-purple-300 italic">"Ancient wisdom flows through these sacred halls"</p>
+            </div>
+
+            <!-- Current Risk Card -->
+            <div class="magic-card rounded-2xl p-8 text-center max-w-2xl mx-auto mb-8 relative overflow-hidden" id="wellness-risk-card">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 via-yellow-400 to-rose-400"></div>
+                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-emerald-500/20 mb-4 rune-glow relative">
+                    <i class="fas fa-shield-halved text-5xl text-emerald-400"></i>
+                    <div class="absolute inset-0 rounded-full border-2 border-emerald-400/30 animate-spin" style="animation-duration: 10s;"></div>
+                </div>
+                <h3 class="text-2xl font-bold mb-2 magic-font text-white">Thy Aura is Pure!</h3>
+                <p class="text-purple-300 mb-6 italic">The shadows are at bay. Maintain thy protective wards.</p>
+                <div class="flex justify-center gap-4 text-sm">
+                    <div class="px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-400/30 magic-font">
+                        <i class="fas fa-star mr-2"></i>Protected
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="tips-grid">
+                <!-- Tips populated by JS based on risk level -->
+            </div>
+
+            <!-- Breathing Exercise -->
+            <div class="magic-card rounded-2xl p-8 mt-8 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+                <div class="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+                    <div class="flex-1">
+                        <h3 class="text-2xl font-bold magic-font mb-4 text-cyan-400 glow-text">Mana Circulation Ritual</h3>
+                        <p class="text-purple-300 mb-6 italic">"Breathe in the ethereal energies. Inhale for 4 counts, hold, exhale, hold. Let the magic flow."</p>
+                        <button id="breathing-btn" class="px-8 py-3 rounded-full magic-btn text-white font-bold magic-font relative overflow-hidden group">
+                            <span class="relative z-10">Begin Ritual</span>
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <div class="magic-circle">
+                            <div class="magic-circle-ring" id="breathing-ring"></div>
+                            <div id="breathing-orb" class="absolute inset-4 rounded-full bg-gradient-to-br from-cyan-400/30 to-purple-500/30 flex items-center justify-center border border-cyan-400/50 transition-all duration-[4000ms]">
+                                <span id="breathing-text" class="text-lg font-bold magic-font text-cyan-300 glow-text">Ready?</span>
+                            </div>
+                        </div>
+                        <div class="absolute -inset-4 rounded-full border border-cyan-400/20 animate-ping hidden" id="breathing-ping"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+
+    <script>
+        // Generate magical stars
+        function createStars() {
+            const container = document.getElementById('stars-container');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                star.style.setProperty('--opacity', Math.random() * 0.8 + 0.2);
+                star.style.setProperty('--color', ['#ffd700', '#00d4ff', '#ff006e', '#9d4edd'][Math.floor(Math.random() * 4)]);
+                container.appendChild(star);
+            }
+        }
+
+        // Create particle burst
+        function createParticles(x, y) {
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.setProperty('--tx', (Math.random() - 0.5) * 100 + 'px');
+                particle.style.setProperty('--ty', (Math.random() - 0.5) * 100 + 'px');
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 3000);
+            }
+        }
+
+        // Tab Switching System
+        function initTabs() {
+            const tabs = ['dashboard', 'checkin', 'tracker', 'wellness'];
+            
+            tabs.forEach(tab => {
+                // Desktop buttons
+                const btn = document.getElementById('btn-' + tab);
+                if (btn) {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        switchToTab(tab);
+                    });
+                }
+                
+                // Mobile buttons
+                const mobileBtns = document.querySelectorAll('.mobile-tab[data-tab="' + tab + '"]');
+                mobileBtns.forEach(mbtn => {
+                    mbtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        switchToTab(tab);
+                    });
+                });
+            });
+            
+            // Quick action buttons
+            document.getElementById('goto-checkin').addEventListener('click', () => switchToTab('checkin'));
+            document.getElementById('goto-tracker').addEventListener('click', () => switchToTab('tracker'));
+            document.getElementById('goto-wellness').addEventListener('click', () => switchToTab('wellness'));
+            document.getElementById('goto-breathing').addEventListener('click', () => {
+                switchToTab('wellness');
+                setTimeout(() => startBreathingExercise(), 500);
+            });
+        }
+
+        function switchToTab(tabName) {
+            // Hide all sections
+            document.querySelectorAll('.section-content').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            const targetSection = document.getElementById('section-' + tabName);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+            
+            // Update desktop nav buttons
+            document.querySelectorAll('.magic-tab').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.add('text-slate-300');
+                btn.classList.remove('text-white');
+            });
+            
+            const activeBtn = document.getElementById('btn-' + tabName);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                activeBtn.classList.remove('text-slate-300');
+                activeBtn.classList.add('text-white');
+            }
+            
+            // Close mobile menu
+            document.getElementById('mobile-menu').classList.add('hidden');
+            
+            // Update charts if dashboard
+            if (tabName === 'dashboard') {
+                setTimeout(updateCharts, 100);
+            }
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        // State Management
+        let currentData = {
+            stressLevel: 5,
+            sleepHours: 7.5,
+            studyHours: 7.5,
+            mood: 4,
+            symptoms: [],
+            history: []
+        };
+
+        // Initialize with sample data
+        function initializeData() {
+            createStars();
+            const today = new Date();
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                currentData.history.push({
+                    date: date.toISOString().split('T')[0],
+                    stress: Math.floor(Math.random() * 4) + 3,
+                    sleep: 6 + Math.random() * 3,
+                    study: 5 + Math.random() * 6,
+                    mood: Math.floor(Math.random() * 3) + 2
+                });
+            }
+            updateDashboard();
+            renderLogs();
+            initEventListeners();
+        }
+
+        // Event Listeners for interactive elements
+        function initEventListeners() {
+            // Stress slider
+            document.getElementById('stress-slider').addEventListener('input', function(e) {
+                currentData.stressLevel = parseInt(e.target.value);
+                document.getElementById('stress-value').textContent = e.target.value;
+                const colors = ['#06ffa5', '#06ffa5', '#ffd700', '#ffd700', '#ff006e'];
+                const color = e.target.value <= 3 ? '#06ffa5' : e.target.value <= 7 ? '#ffd700' : '#ff006e';
+                document.getElementById('stress-value').style.color = color;
+                document.getElementById('stress-value').style.textShadow = `0 0 20px ${color}`;
+            });
+
+            // Study slider
+            document.getElementById('study-slider').addEventListener('input', function(e) {
+                currentData.studyHours = parseFloat(e.target.value);
+                document.getElementById('study-display').textContent = e.target.value + ' hrs';
+            });
+
+            // Sleep buttons
+            document.querySelectorAll('.sleep-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    currentData.sleepHours = parseFloat(this.dataset.value);
+                    document.querySelectorAll('.sleep-btn').forEach(b => {
+                        b.classList.remove('border-yellow-400', 'bg-purple-500/20', 'ring-2', 'ring-yellow-400/50');
+                        b.classList.add('border-purple-500/30');
+                    });
+                    this.classList.remove('border-purple-500/30');
+                    this.classList.add('border-yellow-400', 'bg-purple-500/20', 'ring-2', 'ring-yellow-400/50');
+                });
+            });
+
+            // Mood buttons
+            document.querySelectorAll('.mood-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    currentData.mood = parseInt(this.dataset.mood);
+                    document.querySelectorAll('.mood-btn').forEach(b => {
+                        b.classList.remove('ring-2', 'border-yellow-400', 'bg-yellow-500/10', 'grayscale-0');
+                        b.classList.add('border-purple-500/30', 'grayscale');
+                    });
+                    this.classList.remove('border-purple-500/30', 'grayscale');
+                    
+                    const colors = ['border-rose-400', 'bg-rose-500/10', 'border-orange-400', 'bg-orange-500/10', 'border-yellow-400', 'bg-yellow-500/10', 'border-emerald-400', 'bg-emerald-500/10'];
+                    const index = (currentData.mood - 1) * 2;
+                    this.classList.add(colors[index], colors[index + 1], 'ring-2', 'ring-yellow-400/50', 'grayscale-0');
+                });
+            });
+
+            // Symptom buttons
+            document.querySelectorAll('.symptom-tag').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const symptom = this.dataset.symptom;
+                    if (symptom === 'none') {
+                        currentData.symptoms = [];
+                        document.querySelectorAll('.symptom-tag').forEach(tag => {
+                            tag.classList.remove('bg-rose-500/20', 'border-rose-400', 'text-rose-400');
+                            tag.classList.add('border-purple-500/30');
+                        });
+                        this.classList.add('bg-rose-500/20', 'border-rose-400', 'text-rose-400');
+                        return;
+                    }
+                    
+                    const index = currentData.symptoms.indexOf(symptom);
+                    if (index > -1) {
+                        currentData.symptoms.splice(index, 1);
+                        this.classList.remove('bg-rose-500/20', 'border-rose-400', 'text-rose-400');
+                        this.classList.add('border-purple-500/30');
+                    } else {
+                        currentData.symptoms.push(symptom);
+                        this.classList.remove('border-purple-500/30');
+                        this.classList.add('bg-rose-500/20', 'border-rose-400', 'text-rose-400');
+                        document.querySelector('[data-symptom="none"]').classList.remove('bg-rose-500/20', 'border-rose-400', 'text-rose-400');
+                        document.querySelector('[data-symptom="none"]').classList.add('border-purple-500/30');
+                    }
+                });
+            });
+
+            // Submit checkin
+            document.getElementById('submit-checkin').addEventListener('click', submitCheckin);
+            
+            // Add study session
+            document.getElementById('add-study-session').addEventListener('click', addStudySession);
+            
+            // Breathing button
+            document.getElementById('breathing-btn').addEventListener('click', startBreathingExercise);
+        }
+
+        function calculateBurnoutScore() {
+            let score = 0;
+            score += (currentData.stressLevel / 10) * 40;
+            score += Math.max(0, (8 - currentData.sleepHours) / 8) * 30;
+            score += Math.max(0, (currentData.studyHours - 8) / 8) * 20;
+            score += ((6 - currentData.mood) / 5) * 10;
+            score += currentData.symptoms.length * 3;
+            
+            return Math.min(100, Math.round(score));
+        }
+
+        function submitCheckin() {
+            const score = calculateBurnoutScore();
+            const today = new Date().toISOString().split('T')[0];
+            
+            const entry = {
+                date: today,
+                stress: currentData.stressLevel,
+                sleep: currentData.sleepHours,
+                study: currentData.studyHours,
+                mood: currentData.mood,
+                burnoutScore: score
+            };
+            
+            const existingIndex = currentData.history.findIndex(h => h.date === today);
+            if (existingIndex >= 0) {
+                currentData.history[existingIndex] = entry;
+            } else {
+                currentData.history.push(entry);
+            }
+            
+            showToast('✦ Rune cast successfully! Destiny revealed! ✦', 'success');
+            updateDashboard();
+            renderLogs();
+            generateTips(score);
+            
+            setTimeout(() => switchToTab('dashboard'), 500);
+        }
+
+        // Dashboard Updates
+        function updateDashboard() {
+            const latest = currentData.history[currentData.history.length - 1];
+            if (!latest) return;
+            
+            const score = latest.burnoutScore || calculateBurnoutScore();
+            
+            const circle = document.getElementById('burnout-circle');
+            const circumference = 2 * Math.PI * 45;
+            const offset = circumference - (score / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+            
+            document.getElementById('burnout-score').textContent = score;
+            
+            let status = 'Aura Balanced';
+            let color = 'text-emerald-400';
+            let glowColor = '#06ffa5';
+            if (score > 70) {
+                status = 'Shadows Gathering';
+                color = 'text-rose-400';
+                glowColor = '#ff006e';
+            } else if (score > 40) {
+                status = 'Storms Brewing';
+                color = 'text-amber-400';
+                glowColor = '#ffd700';
+            }
+            document.getElementById('burnout-status').textContent = status;
+            document.getElementById('burnout-status').className = `text-center text-sm font-bold magic-font ${color} glow-text`;
+            document.getElementById('burnout-status').style.textShadow = `0 0 10px ${glowColor}`;
+            
+            const recent = currentData.history.slice(-7);
+            const avgStress = recent.reduce((a, b) => a + b.stress, 0) / recent.length;
+            document.getElementById('weekly-avg').textContent = avgStress.toFixed(1);
+            
+            const avgSleep = recent.reduce((a, b) => a + b.sleep, 0) / recent.length;
+            document.getElementById('avg-sleep').textContent = avgSleep.toFixed(1);
+            
+            const sleepBars = document.getElementById('sleep-bars');
+            sleepBars.innerHTML = '';
+            recent.forEach(day => {
+                const height = (day.sleep / 10) * 100;
+                const barColor = day.sleep < 6 ? 'bg-rose-500' : day.sleep < 7 ? 'bg-amber-500' : 'bg-emerald-500';
+                sleepBars.innerHTML += `
+                    <div class="w-full bg-purple-900/50 rounded-t-sm relative group cursor-pointer" style="height: ${Math.min(100, height)}%">
+                        <div class="absolute bottom-0 w-full ${barColor} rounded-t-sm opacity-80 group-hover:opacity-100 transition shadow-[0_0_10px_currentColor]"></div>
+                        <div class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 bg-purple-900 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-10 border border-purple-500/30">
+                            ${day.sleep.toFixed(1)}h
+                        </div>
+                    </div>
+                `;
+            });
+            
+            updateCharts();
+        }
+
+        function updateCharts() {
+            Chart.defaults.color = '#94a3b8';
+            Chart.defaults.borderColor = 'rgba(147, 51, 234, 0.1)';
+            
+            const ctx1 = document.getElementById('weeklyChart');
+            if (ctx1) {
+                const recent = currentData.history.slice(-7);
+                new Chart(ctx1, {
+                    type: 'line',
+                    data: {
+                        labels: recent.map(h => h.date.slice(5)),
+                        datasets: [{
+                            label: 'Mana Strain',
+                            data: recent.map(h => h.stress),
+                            borderColor: '#00d4ff',
+                            backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#ffd700',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: '#ffd700'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, max: 10, grid: { color: 'rgba(147, 51, 234, 0.1)' } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+            
+            const ctx2 = document.getElementById('studyChart');
+            if (ctx2) {
+                const recent = currentData.history.slice(-7);
+                new Chart(ctx2, {
+                    type: 'bar',
+                    data: {
+                        labels: recent.map(h => h.date.slice(5)),
+                        datasets: [{
+                            label: 'Knowledge Seeking',
+                            data: recent.map(h => h.study),
+                            backgroundColor: 'rgba(245, 158, 11, 0.8)',
+                            borderRadius: 4
+                        }, {
+                            label: 'Dream Realm',
+                            data: recent.map(h => h.sleep),
+                            backgroundColor: 'rgba(99, 102, 241, 0.8)',
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { 
+                            legend: { position: 'top', labels: { color: '#94a3b8', font: { family: 'Cinzel' } } } 
+                        },
+                        scales: {
+                            y: { grid: { color: 'rgba(147, 51, 234, 0.1)' } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+            
+            const ctx3 = document.getElementById('correlationChart');
+            if (ctx3) {
+                new Chart(ctx3, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: 'Strain vs Knowledge',
+                            data: currentData.history.map(h => ({x: h.study, y: h.stress})),
+                            backgroundColor: 'rgba(255, 0, 110, 0.6)',
+                            pointRadius: 6,
+                            pointHoverRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { title: { display: true, text: 'Hours of Study', color: '#94a3b8', font: { family: 'Cinzel' } }, grid: { color: 'rgba(147, 51, 234, 0.1)' } },
+                            y: { title: { display: true, text: 'Mana Strain', color: '#94a3b8', font: { family: 'Cinzel' } }, grid: { color: 'rgba(147, 51, 234, 0.1)' } }
+                        }
+                    }
+                });
+            }
+        }
+
+        function renderLogs() {
+            const studyLog = document.getElementById('study-log');
+            const sleepLog = document.getElementById('sleep-log');
+            
+            studyLog.innerHTML = '';
+            sleepLog.innerHTML = '';
+            
+            const recent = currentData.history.slice(-5).reverse();
+            
+            recent.forEach(entry => {
+                studyLog.innerHTML += `
+                    <div class="flex items-center justify-between p-3 rounded-lg bg-purple-900/30 border border-purple-500/20 hover:border-yellow-400/50 transition group">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center rune-glow">
+                                <i class="fas fa-scroll text-amber-400"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium text-slate-200 magic-font">${entry.date}</div>
+                                <div class="text-xs text-purple-400">Ritual Completed</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-bold text-amber-400 magic-font">${entry.study}h</div>
+                            <div class="text-xs text-purple-500">${entry.study > 10 ? 'Intense' : 'Balanced'}</div>
+                        </div>
+                    </div>
+                `;
+                
+                const sleepQuality = entry.sleep < 6 ? 'Nightmare' : entry.sleep < 7 ? 'Restless' : 'Peaceful';
+                const sleepColor = entry.sleep < 6 ? 'rose' : entry.sleep < 7 ? 'amber' : 'emerald';
+                sleepLog.innerHTML += `
+                    <div class="flex items-center justify-between p-3 rounded-lg bg-purple-900/30 border border-purple-500/20 hover:border-indigo-400/50 transition group">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-${sleepColor}-500/20 flex items-center justify-center rune-glow">
+                                <i class="fas fa-moon text-${sleepColor}-400"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium text-slate-200 magic-font">${entry.date}</div>
+                                <div class="text-xs text-purple-400">${sleepQuality} slumber</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-bold text-${sleepColor}-400 magic-font">${entry.sleep}h</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function generateTips(score) {
+            const tipsGrid = document.getElementById('tips-grid');
+            const riskCard = document.getElementById('wellness-risk-card');
+            
+            let riskIcon, riskTitle, riskDesc, riskColor;
+            if (score > 70) {
+                riskIcon = 'fa-skull';
+                riskTitle = 'Shadows Converge!';
+                riskDesc = 'Thy essence is depleted! Seek the healing springs immediately. Speak with the Council of Healers.';
+                riskColor = 'rose';
+            } else if (score > 40) {
+                riskIcon = 'fa-triangle-exclamation';
+                riskTitle = 'Storms on the Horizon';
+                riskDesc = 'The balance wavers. Perform protective rituals before the darkness grows.';
+                riskColor = 'amber';
+            } else {
+                riskIcon = 'fa-shield-halved';
+                riskTitle = 'Thy Aura Shines Bright!';
+                riskDesc = 'The protective wards hold strong. Continue thy harmonious practices.';
+                riskColor = 'emerald';
+            }
+            
+            riskCard.innerHTML = `
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-${riskColor}-400 via-yellow-400 to-${riskColor}-400"></div>
+                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-${riskColor}-500/20 mb-4 rune-glow relative">
+                    <i class="fas ${riskIcon} text-5xl text-${riskColor}-400"></i>
+                    <div class="absolute inset-0 rounded-full border-2 border-${riskColor}-400/30 animate-spin" style="animation-duration: ${score > 70 ? '2s' : '10s'};"></div>
+                </div>
+                <h3 class="text-2xl font-bold mb-2 magic-font text-white glow-text">${riskTitle}</h3>
+                <p class="text-purple-300 mb-6 italic">${riskDesc}</p>
+                <div class="flex justify-center gap-4 text-sm">
+                    <div class="px-4 py-2 rounded-full bg-${riskColor}-500/10 text-${riskColor}-400 border border-${riskColor}-400/30 magic-font">
+                        <i class="fas fa-star mr-2"></i>${score > 70 ? 'Critical' : score > 40 ? 'Caution' : 'Protected'}
+                    </div>
+                </div>
+            `;
+            
+            const tips = [];
+            
+            if (currentData.sleepHours < 6) {
+                tips.push({
+                    icon: 'fa-bed',
+                    title: 'Dream Ward Ritual',
+                    desc: 'Thy dream visits are too brief. Enchant thy chamber for 7-8 hours of mystical restoration.',
+                    color: 'indigo'
+                });
+            }
+            
+            if (currentData.studyHours > 10) {
+                tips.push({
+                    icon: 'fa-hourglass-half',
+                    title: 'The Pomodoro Enchantment',
+                    desc: 'Even the greatest mages rest. Study for 25 minutes, then restore mana for 5 minutes.',
+                    color: 'amber'
+                });
+            }
+            
+            if (currentData.stressLevel > 7) {
+                tips.push({
+                    icon: 'fa-wind',
+                    title: 'Emergency Mana Purge',
+                    desc: 'Thy strain is critical! Perform the 4-7-8 breathing spell or walk in moonlight immediately.',
+                    color: 'cyan'
+                });
+            }
+            
+            if (currentData.symptoms.includes('headache') || currentData.symptoms.includes('fatigue')) {
+                tips.push({
+                    icon: 'fa-droplet',
+                    title: 'Elixir of Hydration',
+                    desc: 'Physical afflictions detected. Drink the sacred waters and check thy posture alignment.',
+                    color: 'blue'
+                });
+            }
+            
+            if (tips.length < 3) {
+                tips.push({
+                    icon: 'fa-person-walking',
+                    title: 'Movement Meditation',
+                    desc: 'Every hour, rise and perform the Stretching Ritual for 2 minutes to maintain flow.',
+                    color: 'emerald'
+                });
+                tips.push({
+                    icon: 'fa-users',
+                    title: 'Summon Allies',
+                    desc: 'Connect with thy fellowship. Shared magic strengthens all who participate.',
+                    color: 'violet'
+                });
+            }
+            
+            tipsGrid.innerHTML = tips.map(tip => `
+                <div class="spell-card rounded-xl p-6 hover:transform hover:scale-[1.02] transition cursor-pointer group magic-card">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-12 h-12 rounded-full bg-${tip.color}-500/20 flex items-center justify-center group-hover:scale-110 transition rune-glow">
+                            <i class="fas ${tip.icon} text-${tip.color}-400 text-xl"></i>
+                        </div>
+                        <span class="text-yellow-400/50 text-xl">✦</span>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2 text-slate-200 magic-font">${tip.title}</h4>
+                    <p class="text-sm text-purple-300 italic leading-relaxed">${tip.desc}</p>
+                </div>
+            `).join('');
+        }
+
+        // Breathing Exercise
+        let breathingInterval;
+        function startBreathingExercise() {
+            const orb = document.getElementById('breathing-orb');
+            const text = document.getElementById('breathing-text');
+            const ping = document.getElementById('breathing-ping');
+            const btn = document.getElementById('breathing-btn');
+            const ring = document.getElementById('breathing-ring');
+            
+            if (breathingInterval) {
+                clearInterval(breathingInterval);
+                breathingInterval = null;
+                orb.classList.remove('breathing-active');
+                ping.classList.add('hidden');
+                text.textContent = 'Ready?';
+                btn.innerHTML = '<span class="relative z-10">Begin Ritual</span>';
+                return;
+            }
+            
+            btn.innerHTML = '<span class="relative z-10">End Ritual</span>';
+            orb.classList.add('breathing-active');
+            ping.classList.remove('hidden');
+            
+            let phase = 0;
+            const phases = ['Inhale...', 'Hold...', 'Exhale...', 'Hold...'];
+            
+            text.textContent = phases[0];
+            
+            breathingInterval = setInterval(() => {
+                phase = (phase + 1) % 4;
+                text.textContent = phases[phase];
+            }, 4000);
+            
+            showToast('✦ Mana circulation initiated ✦', 'info');
+        }
+
+        function addStudySession() {
+            const hours = prompt('How many hours of knowledge seeking?');
+            if (hours && !isNaN(hours)) {
+                currentData.studyHours = parseFloat(hours);
+                showToast('✦ Ritual inscribed in the grimoire! ✦', 'success');
+                updateDashboard();
+            }
+        }
+
+        // Toast Notifications
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const colors = {
+                success: 'from-emerald-500/90 to-teal-500/90',
+                error: 'from-rose-500/90 to-pink-500/90',
+                info: 'from-cyan-500/90 to-blue-500/90',
+                warning: 'from-amber-500/90 to-orange-500/90'
+            };
+            
+            toast.className = `notification flex items-center space-x-3 px-6 py-4 rounded-lg shadow-lg shadow-purple-500/20 text-white bg-gradient-to-r ${colors[type]} min-w-[300px] border border-white/20 magic-font`;
+            toast.innerHTML = `
+                <i class="fas fa-sparkles text-yellow-300"></i>
+                <span class="font-medium">${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Initialize everything when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            initTabs();
+            initializeData();
+            generateTips(30);
+        });
+    </script>
+</body>
+</html>
